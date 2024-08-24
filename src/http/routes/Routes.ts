@@ -19,6 +19,12 @@ export const userRoutes: ApiRouteItem[] = [
     action: "show",
     method: "GET",
   },
+  {
+    path: "/users",
+    controller: "AuthController",
+    action: "update",
+    method: "PUT",
+  },
 ];
 
 export const dataRoutes: ApiRouteItem[] = [
@@ -38,7 +44,7 @@ export const dataRoutes: ApiRouteItem[] = [
 
 export const allRoutes: ApiRoute[] = [
   {
-    basePath: process.env.API_BASE_PATH || "/api",
+    basePath: process.env.API_BASE_PATH || "/api/v1",
     routes: [
       ...userRoutes.map((route) => ({ ...route })),
       ...dataRoutes.map((route) => ({ ...route })),

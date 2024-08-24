@@ -13,8 +13,13 @@ import setupRoutes from "./route.setup";
 // Import Routes
 import { allRoutes } from "./http/routes/Routes";
 import connectDB from "./configs/dbSetup";
+import dotenv from "dotenv";
+import session from "express-session";
+import errorHandler from "./errors/errorHandler";
+import passport from "passport";
+import configurePassport from "./configs/configurePassport";
 
-require("dotenv").config();
+dotenv.config();
 connectDB();
 
 export default config({
@@ -48,8 +53,27 @@ export default config({
     // Add cookie parser middleware
     app.use(cookieParser());
 
+    // Add session middleware
+    app.use(passport.initialize());
+    app.use(
+      session({
+        secret: process.env.SESSION_SECRET as string,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+          secure: false,
+          httpOnly: false,
+          maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+        },
+      })
+    );
+
+    configurePassport(passport);
+
     // Setup path to routes json config file
     setupRoutes(app, allRoutes);
+    // catch 404 and forward to error handler
+    app.use(errorHandler);
 
     /**
      * Use @colyseus/playground
